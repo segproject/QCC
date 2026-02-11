@@ -28,6 +28,7 @@
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             overflow: hidden;
+            padding: 15px;
         }
 
         header {
@@ -48,11 +49,11 @@
         }
 
         .calculator {
-            padding: 30px;
+            padding: 20px;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -69,7 +70,7 @@
 
         #insumoSearch {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #c8e6c9;
             border-radius: 10px;
             font-size: 1rem;
@@ -103,7 +104,7 @@
         }
 
         .suggestion-item {
-            padding: 12px 15px;
+            padding: 10px 12px;
             cursor: pointer;
             border-bottom: 1px solid #e8f5e9;
             transition: background 0.2s;
@@ -127,7 +128,7 @@
 
         #insumoSelect {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #c8e6c9;
             border-radius: 10px;
             font-size: 1rem;
@@ -143,20 +144,35 @@
             box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.2);
         }
 
+        /* Ajuste para el campo de fecha */
         #fechaIngreso {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #c8e6c9;
             border-radius: 10px;
             font-size: 1rem;
             cursor: pointer;
             transition: border-color 0.3s;
+            background: #e8f5e9;
+            text-align: center;
+            color: #2e7d32;
         }
 
         #fechaIngreso:focus {
             outline: none;
             border-color: #8bc34a;
             box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.2);
+        }
+
+        /* Para que el selector de fecha no se vea tan alto en móviles */
+        @media (max-width: 600px) {
+            #fechaIngreso {
+                height: auto;
+                line-height: 1.5;
+                padding: 12px 10px;
+                font-size: 1rem;
+                text-align: center;
+            }
         }
 
         .switch-container {
@@ -200,7 +216,7 @@
 
         .result-box {
             background: #f1f8e9;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             margin-top: 20px;
             text-align: center;
@@ -244,47 +260,8 @@
             color: #2e7d32;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
-        .badge-success {
-            background: rgba(76, 175, 80, 0.15);
-            color: #388e3c;
-            border: 1px solid #4caf50;
-        }
-
-        .badge-warning {
-            background: rgba(255, 193, 7, 0.15);
-            color: #f57f17;
-            border: 1px solid #ffc107;
-        }
-
-        .badge-danger {
-            background: rgba(244, 67, 54, 0.15);
-            color: #c62828;
-            border: 1px solid #f44336;
-        }
-
-        .badge-info {
-            background: rgba(33, 150, 243, 0.15);
-            color: #1565c0;
-            border: 1px solid #2196f3;
-        }
-
-        .badge-prep {
-            background: rgba(156, 39, 176, 0.15);
-            color: #7b1fa2;
-            border: 1px solid #9c27b0;
-        }
-
         .btn-container {
-            margin-top: 25px;
+            margin-top: 20px;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
@@ -344,7 +321,7 @@
 
         @media (max-width: 600px) {
             .calculator {
-                padding: 20px;
+                padding: 15px;
             }
 
             h1 {
@@ -357,6 +334,15 @@
 
             .btn-container {
                 grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                padding: 12px;
+                font-size: 1.05rem;
+            }
+            
+            .container {
+                padding: 10px;
             }
         }
     </style>
@@ -474,7 +460,7 @@
             </div>
 
             <div class="form-group">
-                <label for="fechaIngreso">📆 Fecha de ingreso/recibido:</label>
+                <label for="fechaIngreso">📆 Fecha de ingreso/recepción:</label>
                 <input type="date" id="fechaIngreso">
             </div>
 
@@ -493,7 +479,6 @@
                 <div class="result-detail">
                     <div><strong id="insumoNombre">-</strong></div>
                     <div>⏱️ Vida útil: <strong id="vidaUtilText">-</strong></div>
-                    <div id="estadoBadge"></div>
                 </div>
             </div>
         </div>
@@ -577,7 +562,6 @@
         const fechaVencimiento = document.getElementById('fechaVencimiento');
         const insumoNombre = document.getElementById('insumoNombre');
         const vidaUtilText = document.getElementById('vidaUtilText');
-        const estadoBadge = document.getElementById('estadoBadge');
         const btnBuscar = document.getElementById('btnBuscar');
         const btnLista = document.getElementById('btnLista');
         const sectionBuscar = document.getElementById('sectionBuscar');
@@ -594,11 +578,6 @@
         insumoSelect.addEventListener('change', onListaChange);
         btnBuscar.addEventListener('click', () => switchMode(true));
         btnLista.addEventListener('click', () => switchMode(false));
-
-        // Establecer fecha actual por defecto
-        const hoy = new Date();
-        const fechaFormateada = hoy.toISOString().split('T')[0];
-        fechaIngreso.value = fechaFormateada;
 
         // Funciones
         function switchMode(busqueda) {
@@ -717,49 +696,28 @@
             }
 
             let fechaVenc;
-            let estado;
             let emojiVenc = '📅';
 
             if (selectedInsumo.tipo === 'prep') {
                 // Manejo especial para PREPS
                 fechaVenc = 'N/A para recepción';
                 vidaUtilText.textContent = 'Preparación interna';
-                estado = `<span class="badge badge-prep">🍝 Sin vencimiento en recepción</span>`;
                 emojiVenc = '🍝';
             } else if (selectedInsumo.tipo === 'empaque') {
-                fechaVenc = '📦 Según empaque';
-                vidaUtilText.textContent = '📦 Según empaque';
-                estado = `<span class="badge badge-info">ℹ️ Verificar empaque original</span>`;
+                fechaVenc = 'Según empaque';
+                vidaUtilText.textContent = 'Según empaque';
                 emojiVenc = '📦';
             } else {
                 // Cálculo normal
                 const fechaIngresoVal = new Date(fechaIngreso.value);
                 fechaIngresoVal.setDate(fechaIngresoVal.getDate() + parseInt(selectedInsumo.vidaUtil));
                 fechaVenc = formatDate(fechaIngresoVal);
-                
-                // Calcular estado
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                const diasDiferencia = Math.floor((fechaIngresoVal - hoy) / (1000 * 60 * 60 * 24));
-                
-                if (diasDiferencia < 0) {
-                    estado = `<span class="badge badge-danger">❌ Vencido</span>`;
-                    emojiVenc = '❌';
-                } else if (diasDiferencia <= 7) {
-                    estado = `<span class="badge badge-warning">⚠️ Por vencer (${diasDiferencia} días)</span>`;
-                    emojiVenc = '⚠️';
-                } else {
-                    estado = `<span class="badge badge-success">✅ Vigente (${diasDiferencia} días)</span>`;
-                    emojiVenc = '✅';
-                }
-                
                 vidaUtilText.textContent = selectedInsumo.vidaUtil + ' días';
             }
 
             // Mostrar resultado
             insumoNombre.textContent = selectedInsumo.nombre;
             fechaVencimiento.textContent = `${emojiVenc} ${fechaVenc}`;
-            estadoBadge.innerHTML = estado;
             resultBox.classList.add('active');
         }
 
@@ -772,15 +730,13 @@
             notePrep.classList.remove('active');
             
             // Restablecer fecha actual
-            const hoy = new Date();
-            fechaIngreso.value = hoy.toISOString().split('T')[0];
+            fechaIngreso.value = '';
             
             // Ocultar resultado
             resultBox.classList.remove('active');
             insumoNombre.textContent = '-';
             vidaUtilText.textContent = '-';
             fechaVencimiento.textContent = '--/--/----';
-            estadoBadge.innerHTML = '';
         }
 
         function formatDate(date) {
